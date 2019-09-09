@@ -1,8 +1,3 @@
-# @Author : bamtercelboo
-# @Datetime : 2018/1/30 19:50
-# @File : main_hyperparams.py.py
-# @Last Modify Time : 2018/1/30 19:50
-# @Contact : bamtercelboo@{gmail.com, 163.com}
 
 """
     FILE :  main_hyperparams.py.py
