@@ -1,9 +1,3 @@
-# @Author : bamtercelboo
-# @Datetime : 2018/9/15 19:09
-# @File : modelHelp.py
-# @Last Modify Time : 2018/9/15 19:09
-# @Contact : bamtercelboo@{gmail.com, 163.com}
-
 """
     FILE :  modelHelp.py
     FUNCTION : None
