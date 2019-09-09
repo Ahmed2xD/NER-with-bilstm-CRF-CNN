@@ -1,9 +1,3 @@
-# @Author : bamtercelboo
-# @Datetime : 2018/9/14 9:51
-# @File : CRF.py
-# @Last Modify Time : 2018/9/14 9:51
-# @Contact : bamtercelboo@{gmail.com, 163.com}
-
 """
     FILE :  CRF.py
     FUNCTION : None
