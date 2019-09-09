@@ -9,8 +9,8 @@ from evaluating import Metrics
 
 
 def hmm_train_eval(train_data, test_data, word2id, tag2id, remove_O=False):
-    """训练并评估hmm模型"""
-    # 训练HMM模型
+    """ Train and evaluate the hmm model """
+    # Training HMM model
     train_word_lists, train_tag_lists = train_data
     test_word_lists, test_tag_lists = test_data
 
@@ -21,7 +21,7 @@ def hmm_train_eval(train_data, test_data, word2id, tag2id, remove_O=False):
                     tag2id)
     save_model(hmm_model, "./ckpts/hmm.pkl")
 
-    # 评估hmm模型
+  #Evaluation of the hmm model
     pred_tag_lists = hmm_model.test(test_word_lists,
                                     word2id,
                                     tag2id)
@@ -35,7 +35,7 @@ def hmm_train_eval(train_data, test_data, word2id, tag2id, remove_O=False):
 
 def crf_train_eval(train_data, test_data, remove_O=False):
 
-    # 训练CRF模型
+    # training CRF model
     train_word_lists, train_tag_lists = train_data
     test_word_lists, test_tag_lists = test_data
 
@@ -68,8 +68,8 @@ def bilstm_train_and_eval(train_data, dev_data, test_data,
     model_name = "bilstm_crf" if crf else "bilstm"
     save_model(bilstm_model, "./ckpts/"+model_name+".pkl")
 
-    print("训练完毕,共用时{}秒.".format(int(time.time()-start)))
-    print("评估{}模型中...".format(model_name))
+    print("Training completed, {} seconds when sharing.".format(int(time.time()-start)))
+    print("Evaluation{} model:...".format(model_name))
     pred_tag_lists, test_tag_lists = bilstm_model.test(
         test_word_lists, test_tag_lists, word2id, tag2id)
 
@@ -81,7 +81,7 @@ def bilstm_train_and_eval(train_data, dev_data, test_data,
 
 
 def ensemble_evaluate(results, targets, remove_O=False):
-    """ensemble多个模型"""
+    """Multiple models of ensemble"""
     for i in range(len(results)):
         results[i] = flatten_lists(results[i])
 
@@ -93,7 +93,7 @@ def ensemble_evaluate(results, targets, remove_O=False):
     targets = flatten_lists(targets)
     assert len(pred_tags) == len(targets)
 
-    print("Ensemble 四个模型的结果如下：")
+    print("The results of the four Ensemble models are as follows:")
     metrics = Metrics(targets, pred_tags, remove_O=remove_O)
     metrics.report_scores()
     metrics.report_confusion_matrix()

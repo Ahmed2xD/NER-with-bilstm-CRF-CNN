@@ -22,7 +22,7 @@ import random
 from data import build_corpus
 from evaluate import hmm_train_eval, crf_train_eval, \
     bilstm_train_and_eval, ensemble_evaluate
-from utils import load_model, extend_maps, prepocess_data_for_lstmcrf
+from utils import load_model_1, extend_maps, prepocess_data_for_lstmcrf
 from evaluating import Metrics
 from evaluate import ensemble_evaluate
 ###
@@ -104,12 +104,12 @@ def main():
             start_test(train_iter, dev_iter, test_iter, model, alphabet, config)
             exit()
 
-
+#main function for the first training set of models(CRF , Bilstm-crf ,Bilstm)
 def main_rep1(x , y):
 
     if x == 'train':
         # select data according to args.process
-        print("读取数据...")
+        print("Read data...")
         train_word_lists, train_tag_lists, word2id, tag2id = \
         build_corpus("train")
         dev_word_lists, dev_tag_lists = build_corpus("dev", make_vocab=False)
@@ -170,18 +170,18 @@ def main_rep1(x , y):
         BiLSTM_MODEL_PATH = './ckpts/bilstm.pkl'
         BiLSTMCRF_MODEL_PATH = './ckpts/bilstm_crf.pkl'
 
-        REMOVE_O = False  # 在评估的时候是否去除O标记
+        REMOVE_O = False  # Whether to remove the O mark at the time of evaluation
 
        
         # select data according to args.process
-        print("读取数据...")
+        print("Read data...")
         train_word_lists, train_tag_lists, word2id, tag2id = \
             build_corpus("train")
         dev_word_lists, dev_tag_lists = build_corpus("dev", make_vocab=False)
         test_word_lists, test_tag_lists = build_corpus("test", make_vocab=False)           
 
         if y == 'crf':
-            crf_model = load_model(CRF_MODEL_PATH)
+            crf_model = load_model_1(CRF_MODEL_PATH)
             crf_pred = crf_model.test(test_word_lists)
             metrics = Metrics(test_tag_lists, crf_pred, remove_O=REMOVE_O)
             metrics.report_scores()
@@ -189,7 +189,7 @@ def main_rep1(x , y):
 
         elif y == 'bilstm':
             bilstm_word2id, bilstm_tag2id = extend_maps(word2id, tag2id, for_crf=False)
-            bilstm_model = load_model(BiLSTM_MODEL_PATH)
+            bilstm_model = load_model_1(BiLSTM_MODEL_PATH)
             bilstm_model.model.bilstm.flatten_parameters()  # remove warning
             lstm_pred, target_tag_list = bilstm_model.test(test_word_lists, test_tag_lists,
                                                                bilstm_word2id, bilstm_tag2id)
@@ -199,7 +199,7 @@ def main_rep1(x , y):
 
         elif y == 'bilstm-crf':    
             crf_word2id, crf_tag2id = extend_maps(word2id, tag2id, for_crf=True)
-            bilstm_model = load_model(BiLSTMCRF_MODEL_PATH)
+            bilstm_model = load_model_1(BiLSTMCRF_MODEL_PATH)
             bilstm_model.model.bilstm.bilstm.flatten_parameters()  # remove warning
             test_word_lists, test_tag_lists = prepocess_data_for_lstmcrf(
                  test_word_lists, test_tag_lists, test=True
@@ -220,7 +220,7 @@ def parse_argument():
     """
     parser = argparse.ArgumentParser(description="NER & POS")
     parser.add_argument("-c", "--config", dest="config_file", type=str, default="./Config/config.cfg",help="config path")
-    parser.add_argument("-device", "--device", dest="device", type=str, default="cuda:0", help="device[‘cpu’,‘cuda:0’,‘cuda:1’,......]")
+    parser.add_argument("-device", "--device", dest="device", type=str, default="cpu", help="device[‘cpu’,‘cuda:0’,‘cuda:1’,......]")
     parser.add_argument("--train", dest="train", action="store_true", default=True, help="train model")
     parser.add_argument("-p", "--process", dest="process", action="store_true", default=True, help="data process")
     parser.add_argument("-t", "--test", dest="test", action="store_true", default=False, help="test model")

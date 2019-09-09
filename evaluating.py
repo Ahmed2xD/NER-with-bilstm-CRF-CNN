@@ -4,7 +4,7 @@ from utils import flatten_lists
 
 
 class Metrics(object):
-    """用于评价模型，计算每个标签的精确率，召回率，F1分数"""
+    """ is used to evaluate the model, calculate the accuracy of each label, recall rate, F1 score """
 
     def __init__(self, golden_tags, predict_tags, remove_O=False):
 
@@ -12,22 +12,19 @@ class Metrics(object):
         self.golden_tags = flatten_lists(golden_tags)
         self.predict_tags = flatten_lists(predict_tags)
 
-        if remove_O:  # 将O标记移除，只关心实体标记
+        if remove_O:  # Remove the O tag, only the entity tag
             self._remove_Otags()
 
-        # 辅助计算的变量
+        
         self.tagset = set(self.golden_tags)
         self.correct_tags_number = self.count_correct_tags()
         self.predict_tags_counter = Counter(self.predict_tags)
         self.golden_tags_counter = Counter(self.golden_tags)
 
-        # 计算精确率
         self.precision_scores = self.cal_precision()
 
-        # 计算召回率
         self.recall_scores = self.cal_recall()
 
-        # 计算F1分数
         self.f1_scores = self.cal_f1()
 
     def cal_precision(self):
@@ -51,11 +48,11 @@ class Metrics(object):
         f1_scores = {}
         for tag in self.tagset:
             p, r = self.precision_scores[tag], self.recall_scores[tag]
-            f1_scores[tag] = 2*p*r / (p+r+1e-10)  # 加上一个特别小的数，防止分母为0
+            f1_scores[tag] = 2*p*r / (p+r+1e-10)  # Add a special small number to prevent the denominator from being 0
         return f1_scores
 
     def report_scores(self):
-        """将结果用表格的形式打印出来，像这个样子：
+        """ prints the results in the form of a table, like this:
 
                       precision    recall  f1-score   support
               B-LOC      0.775     0.757     0.766      1084
@@ -69,13 +66,13 @@ class Metrics(object):
 
           avg/total      0.779     0.764     0.770      6178
         """
-        # 打印表头
+        # Print header
         header_format = '{:>9s}  {:>9} {:>9} {:>9} {:>9}'
         header = ['precision', 'recall', 'f1-score', 'support']
         print(header_format.format('', *header))
 
         row_format = '{:>9s}  {:>9.4f} {:>9.4f} {:>9.4f} {:>9}'
-        # 打印每个标签的 精确率、召回率、f1分数
+        # Print the accuracy, recall, and f1 score for each label
         for tag in self.tagset:
             print(row_format.format(
                 tag,
@@ -85,7 +82,7 @@ class Metrics(object):
                 self.golden_tags_counter[tag]
             ))
 
-        # 计算并打印平均值
+        # Calculate and print the average
         avg_metrics = self._cal_weighted_average()
         print(row_format.format(
             'avg/total',
@@ -96,7 +93,8 @@ class Metrics(object):
         ))
 
     def count_correct_tags(self):
-        """计算每种标签预测正确的个数(对应精确率、召回率计算公式上的tp)，用于后面精确率以及召回率的计算"""
+        """ calculates the correct number of predictions for each label (corresponding to the accuracy, tp on the recall calculation formula), 
+        for the calculation of the subsequent accuracy and recall rate """
         correct_dict = {}
         for gold_tag, predict_tag in zip(self.golden_tags, self.predict_tags):
             if gold_tag == predict_tag:
@@ -112,7 +110,7 @@ class Metrics(object):
         weighted_average = {}
         total = len(self.golden_tags)
 
-        # 计算weighted precisions:
+        # Calculationweighted precisions:
         weighted_average['precision'] = 0.
         weighted_average['recall'] = 0.
         weighted_average['f1_score'] = 0.
@@ -138,33 +136,33 @@ class Metrics(object):
 
         self.predict_tags = [tag for i, tag in enumerate(self.predict_tags)
                              if i not in O_tag_indices]
-        print("原总标记数为{}，移除了{}个O标记，占比{:.2f}%".format(
+        print("The original total number of tags is {}, {} O tags removed, %: {:.2f}%".format(
             length,
             len(O_tag_indices),
             len(O_tag_indices) / length * 100
         ))
 
     def report_confusion_matrix(self):
-        """计算混淆矩阵"""
+        """Compute confusion matrix """
 
         print("\nConfusion Matrix:")
         tag_list = list(self.tagset)
-        # 初始化混淆矩阵 matrix[i][j]表示第i个tag被模型预测成第j个tag的次数
+        # Initialization confusion matrix [i][j] indicates the number of times the i-th tag is predicted by the model as the j-th tag
         tags_size = len(tag_list)
         matrix = []
         for i in range(tags_size):
             matrix.append([0] * tags_size)
 
-        # 遍历tags列表
+        # traverse tags list
         for golden_tag, predict_tag in zip(self.golden_tags, self.predict_tags):
             try:
                 row = tag_list.index(golden_tag)
                 col = tag_list.index(predict_tag)
                 matrix[row][col] += 1
-            except ValueError:  # 有极少数标记没有出现在golden_tags，但出现在predict_tags，跳过这些标记
+            except ValueError:  # There are very few tags that don't appear in golden_tags, but appear in predict_tags, skip these tags
                 continue
 
-        # 输出矩阵
+        # Output matrix
         row_format_ = '{:>7} ' * (tags_size+1)
         print(row_format_.format("", *tag_list))
         for i, row in enumerate(matrix):

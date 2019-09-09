@@ -2,7 +2,7 @@ import pickle
 
 
 def merge_maps(dict1, dict2):
-    """用于合并两个word2id或者两个tag2id"""
+    """ is used to merge two word2ids or two tag2ids """
     for key in dict2.keys():
         if key not in dict1:
             dict1[key] = len(dict1)
@@ -10,26 +10,26 @@ def merge_maps(dict1, dict2):
 
 
 def save_model(model, file_name):
-    """用于保存模型"""
+    """ is used to save the model """
     with open(file_name, "wb") as f:
         pickle.dump(model, f)
 
 
-def load_model(file_name):
-    """用于加载模型"""
+def load_model_1(file_name):
+    """ is used to load the model """
     with open(file_name, "rb") as f:
         model = pickle.load(f)
     return model
 
 
-# LSTM模型训练的时候需要在word2id和tag2id加入PAD和UNK
-# 如果是加了CRF的lstm还要加入<start>和<end> (解码的时候需要用到)
+# LSTM model training needs to add PAD and UNK in word2id and tag2id
+# If it is a lstm with CRF, add <start> and <end> (required for decoding)
 def extend_maps(word2id, tag2id, for_crf=True):
     word2id['<unk>'] = len(word2id)
     word2id['<pad>'] = len(word2id)
     tag2id['<unk>'] = len(tag2id)
     tag2id['<pad>'] = len(tag2id)
-    # 如果是加了CRF的bilstm  那么还要加入<start> 和 <end>token
+    # If you added bilstm with CRF, then add <start> and <end>token
     if for_crf:
         word2id['<start>'] = len(word2id)
         word2id['<end>'] = len(word2id)
@@ -43,7 +43,7 @@ def prepocess_data_for_lstmcrf(word_lists, tag_lists, test=False):
     assert len(word_lists) == len(tag_lists)
     for i in range(len(word_lists)):
         word_lists[i].append("<end>")
-        if not test:  # 如果是测试数据，就不需要加end token了
+        if not test:  # If it is test data, you don't need to add end token.
             tag_lists[i].append("<end>")
 
     return word_lists, tag_lists

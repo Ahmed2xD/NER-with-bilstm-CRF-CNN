@@ -2,8 +2,8 @@ from os.path import join
 from codecs import open
 
 
-def build_corpus(split, make_vocab=True, data_dir="./ResumeNER"):
-    """读取数据"""
+def build_corpus(split, make_vocab=True, data_dir="./Data/ResumeNER"):
+    """Read data"""
     assert split in ['train', 'dev', 'test']
 
     word_lists = []
@@ -22,7 +22,7 @@ def build_corpus(split, make_vocab=True, data_dir="./ResumeNER"):
                 word_list = []
                 tag_list = []
 
-    # 如果make_vocab为True，还需要返回word2id和tag2id
+    # If make_vocab is True, you also need to return word2id and tag2id
     if make_vocab:
         word2id = build_map(word_lists)
         tag2id = build_map(tag_lists)

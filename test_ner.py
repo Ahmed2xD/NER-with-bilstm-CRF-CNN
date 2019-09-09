@@ -8,35 +8,35 @@ CRF_MODEL_PATH = './ckpts/crf.pkl'
 BiLSTM_MODEL_PATH = './ckpts/bilstm.pkl'
 BiLSTMCRF_MODEL_PATH = './ckpts/bilstm_crf.pkl'
 
-REMOVE_O = False  # 在评估的时候是否去除O标记
+REMOVE_O = False  # Is the O mark removed during the evaluation?
 
 
 def main():
-    print("读取数据...")
+    print("Read data...")
     train_word_lists, train_tag_lists, word2id, tag2id = \
         build_corpus("train")
     dev_word_lists, dev_tag_lists = build_corpus("dev", make_vocab=False)
     test_word_lists, test_tag_lists = build_corpus("test", make_vocab=False)
 
-    print("加载并评估hmm模型...")
+    print("Load and evaluate the hmm model...")
     hmm_model = load_model(HMM_MODEL_PATH)
     hmm_pred = hmm_model.test(test_word_lists,
                               word2id,
                               tag2id)
     metrics = Metrics(test_tag_lists, hmm_pred, remove_O=REMOVE_O)
-    metrics.report_scores()  # 打印每个标记的精确度、召回率、f1分数
-    metrics.report_confusion_matrix()  # 打印混淆矩阵
+    metrics.report_scores()  # Print the accuracy of each mark, recall rate, f1 score
+    metrics.report_confusion_matrix()  #Print confusion matrix
 
-    # 加载并评估CRF模型
-    print("加载并评估crf模型...")
+    # Load and evaluate the CRF model
+    print("Load and evaluate the crf model...")
     crf_model = load_model(CRF_MODEL_PATH)
     crf_pred = crf_model.test(test_word_lists)
     metrics = Metrics(test_tag_lists, crf_pred, remove_O=REMOVE_O)
     metrics.report_scores()
     metrics.report_confusion_matrix()
 
-    # bilstm模型
-    print("加载并评估bilstm模型...")
+    # bilstm Model
+    print("Load and evaluate the bilstm model...")
     bilstm_word2id, bilstm_tag2id = extend_maps(word2id, tag2id, for_crf=False)
     bilstm_model = load_model(BiLSTM_MODEL_PATH)
     bilstm_model.model.bilstm.flatten_parameters()  # remove warning
@@ -46,7 +46,7 @@ def main():
     metrics.report_scores()
     metrics.report_confusion_matrix()
 
-    print("加载并评估bilstm+crf模型...")
+    print("Load and evaluate the bilstm+crf model...")
     crf_word2id, crf_tag2id = extend_maps(word2id, tag2id, for_crf=True)
     bilstm_model = load_model(BiLSTMCRF_MODEL_PATH)
     bilstm_model.model.bilstm.bilstm.flatten_parameters()  # remove warning
