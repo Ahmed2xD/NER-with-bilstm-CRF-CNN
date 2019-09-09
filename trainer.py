@@ -1,8 +1,3 @@
-# @Author : bamtercelboo
-# @Datetime : 2018/8/26 8:30
-# @File : trainer.py
-# @Last Modify Time : 2018/8/26 8:30
-# @Contact : bamtercelboo@{gmail.com, 163.com}
 
 """
     FILE :  trainer.py
