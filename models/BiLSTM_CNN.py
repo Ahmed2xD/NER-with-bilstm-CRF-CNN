@@ -1,9 +1,3 @@
-# @Author : bamtercelboo
-# @Datetime : 2018/8/17 16:06
-# @File : BiLSTM.py
-# @Last Modify Time : 2018/8/17 16:06
-# @Contact : bamtercelboo@{gmail.com, 163.com}
-
 """
     FILE :  BiLSTM.py
     FUNCTION : None
