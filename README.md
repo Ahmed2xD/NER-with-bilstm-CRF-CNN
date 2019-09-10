@@ -1,4 +1,3 @@
-NER using Bilstm(only , CRF , CNN) , CRF
 
 to train model using: 
   1- Bilstm:
@@ -11,7 +10,7 @@ to train model using:
               python main.py -tr1 bilstm-crf
               
   4- Bilstm-CNN:
-              python main.py --train
+              python main.py --train BILSTM-CNN
  
  
  To test model using :
@@ -25,5 +24,6 @@ to train model using:
               python main.py -test1 bilstm-crf
               
   4- Bilstm-CNN:
-              python main.py -t
+              python main.py -t BILSTM-CNN
+              
  
